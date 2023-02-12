@@ -1,51 +1,39 @@
-import streamlit as st
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
-@st.cache
-def load_data(file):
-    data = pd.read_csv(file)
-    return data
+# Input produk dan bahan baku
+products = ['Product 1', 'Product 2', 'Product 3']
+raw_materials = ['Raw Material 1', 'Raw Material 2', 'Raw Material 3', 'Raw Material 4']
 
-def main():
-    st.title("Rencana Produksi")
+# Input jumlah produksi produk
+production_plan = [100, 200, 300]
 
-    # Load data from CSV file
-    products = load_data("products.csv")
+# Input harga bahan baku
+raw_material_prices = [10, 20, 30, 40]
 
-    # Create a selectbox for the products
-    selected_products = st.multiselect("Pilih produk:", products["Nama Produk"].unique())
+# Input jumlah bahan baku per produk
+raw_material_usage = [[10, 20, 30, 40], [20, 30, 40, 50], [30, 40, 50, 60]]
 
-    # Filter the products dataframe for the selected products
-    selected_products_df = products[products["Nama Produk"].isin(selected_products)]
+# Perhitungan biaya kebutuhan bahan baku
+costs = []
+for usage in raw_material_usage:
+    cost = 0
+    for i in range(len(usage)):
+        cost += usage[i] * raw_material_prices[i]
+    costs.append(cost)
 
-    # Create an input field for the production plan
-    production_plan = {}
-    for product in selected_products:
-        production_plan[product] = st.number_input(f"Jumlah produk {product}:", value=0)
+# Buat data frame dari input
+data = {'Product': products, 'Production Plan': production_plan, 'Cost': costs}
+df = pd.DataFrame(data)
 
-    # Calculate the raw material needs
-    raw_material_needs = {}
-    for product, quantity in production_plan.items():
-        raw_materials = selected_products_df[selected_products_df["Nama Produk"] == product]["Bahan Baku"].tolist()
-        for raw_material in raw_materials:
-            if raw_material in raw_material_needs:
-                raw_material_needs[raw_material] += quantity
-            else:
-                raw_material_needs[raw_material] = quantity
-
-    # Calculate the costs
-    costs = {}
-    for product, quantity in production_plan.items():
-        price = selected_products_df[selected_products_df["Nama Produk"] == product]["Harga per Unit"].iloc[0]
-        costs[product] = price * quantity
-
-    # Show the results in a table
-    st.write("Rencana produksi:")
-    st.write(production_plan)
-    st.write("Bahan baku yang dibutuhkan:")
-    st.write(raw_material_needs)
-    st.write("Biaya bahan baku:")
-    st.write(costs)
-
-if __name__ == "__main__":
-    main()
+# Tampilkan laporan
+pdf_pages = PdfPages('Production Report.pdf')
+plt.figure(figsize=[15, 5])
+plt.bar(df['Product'], df['Cost'])
+plt.xlabel('Product')
+plt.ylabel('Cost')
+plt.title('Production Report')
+pdf_pages.savefig()
+pdf_pages.close()
