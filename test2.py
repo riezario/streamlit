@@ -1,37 +1,51 @@
 import streamlit as st
 import pandas as pd
 
-def calculate_raw_material_requirement(marketing_plan, raw_materials):
-    raw_material_requirement = {}
-    for product, quantity in marketing_plan.items():
-        for raw_material, usage in raw_materials[product].items():
-            if raw_material not in raw_material_requirement:
-                raw_material_requirement[raw_material] = 0
-            raw_material_requirement[raw_material] += usage * quantity
-    return raw_material_requirement
+@st.cache
+def load_data(file):
+    data = pd.read_csv(file)
+    return data
 
 def main():
-    st.title("Raw Material Calculator")
-    
-    marketing_plan = {
-        "Product A": 100,
-        "Product B": 200,
-        "Product C": 300
-    }
-    
-    raw_materials = {
-        "Product A": {"Raw Material X": 1, "Raw Material Y": 2},
-        "Product B": {"Raw Material X": 2, "Raw Material Y": 1, "Raw Material Z": 3},
-        "Product C": {"Raw Material Y": 1, "Raw Material Z": 2}
-    }
-    
-    raw_material_requirement = calculate_raw_material_requirement(marketing_plan, raw_materials)
-    
-    st.write("Marketing Plan:")
-    st.write(pd.DataFrame.from_dict(marketing_plan, orient="index", columns=["Quantity"]))
-    
-    st.write("Raw Material Requirements:")
-    st.write(pd.DataFrame.from_dict(raw_material_requirement, orient="index", columns=["Quantity"]))
+    st.title("Rencana Produksi")
+
+    # Load data from CSV file
+    products = load_data("products.csv")
+
+    # Create a selectbox for the products
+    selected_products = st.multiselect("Pilih produk:", products["Nama Produk"].unique())
+
+    # Filter the products dataframe for the selected products
+    selected_products_df = products[products["Nama Produk"].isin(selected_products)]
+
+    # Create an input field for the production plan
+    production_plan = {}
+    for product in selected_products:
+        production_plan[product] = st.number_input(f"Jumlah produk {product}:", value=0)
+
+    # Calculate the raw material needs
+    raw_material_needs = {}
+    for product, quantity in production_plan.items():
+        raw_materials = selected_products_df[selected_products_df["Nama Produk"] == product]["Bahan Baku"].tolist()
+        for raw_material in raw_materials:
+            if raw_material in raw_material_needs:
+                raw_material_needs[raw_material] += quantity
+            else:
+                raw_material_needs[raw_material] = quantity
+
+    # Calculate the costs
+    costs = {}
+    for product, quantity in production_plan.items():
+        price = selected_products_df[selected_products_df["Nama Produk"] == product]["Harga per Unit"].iloc[0]
+        costs[product] = price * quantity
+
+    # Show the results in a table
+    st.write("Rencana produksi:")
+    st.write(production_plan)
+    st.write("Bahan baku yang dibutuhkan:")
+    st.write(raw_material_needs)
+    st.write("Biaya bahan baku:")
+    st.write(costs)
 
 if __name__ == "__main__":
     main()
