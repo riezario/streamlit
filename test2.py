@@ -1,33 +1,31 @@
-# memasukkan pustaka streamlit
 import streamlit as st
 
-# meminta pengguna untuk memasukkan jumlah produk yang akan diproduksi
+# Daftar produk yang tersedia
+produk_tersedia = {
+    "Produk A": {"Bahan Baku 1": 10, "Bahan Baku 2": 5, "Bahan Baku 3": 2, "Harga": 1000},
+    "Produk B": {"Bahan Baku 1": 5, "Bahan Baku 2": 8, "Bahan Baku 3": 1, "Harga": 1500},
+    "Produk C": {"Bahan Baku 1": 3, "Bahan Baku 2": 6, "Bahan Baku 3": 4, "Harga": 2000},
+}
+
+# Meminta pengguna untuk memasukkan nama produk
+nama_produk = st.selectbox("Pilih produk yang akan diproduksi:", list(produk_tersedia.keys()))
+
+# Meminta pengguna untuk memasukkan jumlah produk yang akan diproduksi
 jumlah_produk = int(st.number_input("Masukkan jumlah produk yang akan diproduksi: "))
 
-# meminta pengguna untuk memasukkan jumlah bahan baku per produk
-jumlah_bahan_baku = int(st.number_input("Berapa banyak bahan baku yang digunakan per produk? "))
+# Mengambil informasi produk yang dipilih oleh pengguna
+informasi_produk = produk_tersedia[nama_produk]
 
-# membuat list untuk menyimpan informasi bahan baku
-bahan_baku = []
-
-# meminta pengguna untuk memasukkan informasi bahan baku
-for i in range(jumlah_bahan_baku):
-    nama_bahan_baku = st.text_input(f"Masukkan nama bahan baku {i+1}: ", key=f'nama_bahan_baku_{i}')
-    jumlah_bahan_baku_per_produk = float(st.number_input(f"Masukkan jumlah bahan baku per produk: ", key=f'jumlah_bahan_baku_per_produk_{i}'))
-    harga_bahan_baku = float(st.number_input(f"Masukkan harga bahan baku per satuan: ", key=f'harga_bahan_baku_{i}'))
-    bahan_baku.append((nama_bahan_baku, jumlah_bahan_baku_per_produk, harga_bahan_baku))
-    
-# menghitung kebutuhan bahan baku dan biaya total
+# Menghitung kebutuhan bahan baku dan biaya total
 total_biaya = 0
-for bahan in bahan_baku:
-    nama_bahan_baku, jumlah_bahan_baku_per_produk, harga_bahan_baku = bahan
-    kebutuhan_bahan_baku = jumlah_produk * jumlah_bahan_baku_per_produk
-    biaya = kebutuhan_bahan_baku * harga_bahan_baku
-    total_biaya += biaya
-
-# menampilkan hasil
 st.write("Kebutuhan Bahan Baku:")
-for bahan in bahan_baku:
-    nama_bahan_baku, jumlah_bahan_baku_per_produk, harga_bahan_baku = bahan
-    st.write(f"- {nama_bahan_baku}: {jumlah_produk * jumlah_bahan_baku_per_produk}")
+for bahan_baku, jumlah_bahan_baku in informasi_produk.items():
+    if bahan_baku == "Harga":
+        continue
+    kebutuhan_bahan_baku = jumlah_bahan_baku * jumlah_produk
+    biaya = kebutuhan_bahan_baku * informasi_produk["Harga"]
+    total_biaya += biaya
+    st.write(f"- {bahan_baku}: {kebutuhan_bahan_baku}")
+
+# Menampilkan hasil
 st.write(f"Total Biaya: {total_biaya}")
