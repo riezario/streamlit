@@ -12,11 +12,11 @@ bahan_baku = []
 
 # meminta pengguna untuk memasukkan informasi bahan baku
 for i in range(jumlah_bahan_baku):
-    nama_bahan_baku = st.text_input(f"Masukkan nama bahan baku {i+1}: ")
-    jumlah_bahan_baku_per_produk = float(st.number_input(f"Masukkan jumlah bahan baku per produk: "))
-    harga_bahan_baku = float(st.number_input(f"Masukkan harga bahan baku per satuan: "))
+    nama_bahan_baku = st.text_input(f"Masukkan nama bahan baku {i+1}: ", key=f'nama_bahan_baku_{i}')
+    jumlah_bahan_baku_per_produk = float(st.number_input(f"Masukkan jumlah bahan baku per produk: ", key=f'jumlah_bahan_baku_per_produk_{i}'))
+    harga_bahan_baku = float(st.number_input(f"Masukkan harga bahan baku per satuan: ", key=f'harga_bahan_baku_{i}'))
     bahan_baku.append((nama_bahan_baku, jumlah_bahan_baku_per_produk, harga_bahan_baku))
-
+    
 # menghitung kebutuhan bahan baku dan biaya total
 total_biaya = 0
 for bahan in bahan_baku:
