@@ -1,51 +1,33 @@
+# memasukkan pustaka streamlit
 import streamlit as st
-import pandas as pd
 
-@st.cache
-def load_data(file):
-    data = pd.read_csv(file)
-    return data
+# meminta pengguna untuk memasukkan jumlah produk yang akan diproduksi
+jumlah_produk = st.number_input("Masukkan jumlah produk yang akan diproduksi: ")
 
-def main():
-    st.title("Rencana Produksi")
+# meminta pengguna untuk memasukkan jumlah bahan baku per produk
+jumlah_bahan_baku = st.number_input("Berapa banyak bahan baku yang digunakan per produk? ")
 
-    # Load data from CSV file
-    products = load_data("products.csv")
+# membuat list untuk menyimpan informasi bahan baku
+bahan_baku = []
 
-    # Create a selectbox for the products
-    selected_products = st.multiselect("Pilih produk:", products["Nama Produk"].unique())
+# meminta pengguna untuk memasukkan informasi bahan baku
+for i in range(jumlah_bahan_baku):
+    nama_bahan_baku = st.text_input(f"Masukkan nama bahan baku {i+1}: ")
+    jumlah_bahan_baku_per_produk = st.number_input(f"Masukkan jumlah bahan baku per produk: ")
+    harga_bahan_baku = st.number_input(f"Masukkan harga bahan baku per satuan: ")
+    bahan_baku.append((nama_bahan_baku, jumlah_bahan_baku_per_produk, harga_bahan_baku))
 
-    # Filter the products dataframe for the selected products
-    selected_products_df = products[products["Nama Produk"].isin(selected_products)]
+# menghitung kebutuhan bahan baku dan biaya total
+total_biaya = 0
+for bahan in bahan_baku:
+    nama_bahan_baku, jumlah_bahan_baku_per_produk, harga_bahan_baku = bahan
+    kebutuhan_bahan_baku = jumlah_produk * jumlah_bahan_baku_per_produk
+    biaya = kebutuhan_bahan_baku * harga_bahan_baku
+    total_biaya += biaya
 
-    # Create an input field for the production plan
-    production_plan = {}
-    for product in selected_products:
-        production_plan[product] = st.number_input(f"Jumlah produk {product}:", value=0)
-
-    # Calculate the raw material needs
-    raw_material_needs = {}
-    for product, quantity in production_plan.items():
-        raw_materials = selected_products_df[selected_products_df["Nama Produk"] == product]["Bahan Baku"].tolist()
-        for raw_material in raw_materials:
-            if raw_material in raw_material_needs:
-                raw_material_needs[raw_material] += quantity
-            else:
-                raw_material_needs[raw_material] = quantity
-
-    # Calculate the costs
-    costs = {}
-    for product, quantity in production_plan.items():
-        price = selected_products_df[selected_products_df["Nama Produk"] == product]["Harga per Unit"].iloc[0]
-        costs[product] = price * quantity
-
-    # Show the results in a table
-    st.write("Rencana produksi:")
-    st.write(production_plan)
-    st.write("Bahan baku yang dibutuhkan:")
-    st.write(raw_material_needs)
-    st.write("Biaya bahan baku:")
-    st.write(costs)
-
-if __name__ == "__main__":
-    main()
+# menampilkan hasil
+st.write("Kebutuhan Bahan Baku:")
+for bahan in bahan_baku:
+    nama_bahan_baku, jumlah_bahan_baku_per_produk, harga_bahan_baku = bahan
+    st.write(f"- {nama_bahan_baku}: {jumlah_produk * jumlah_bahan_baku_per_produk}")
+st.write(f"Total Biaya: {total_biaya}")
