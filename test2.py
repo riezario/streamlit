@@ -11,7 +11,7 @@ jumlah_bahan_baku = st.number_input("Berapa banyak bahan baku yang digunakan per
 bahan_baku = []
 
 # meminta pengguna untuk memasukkan informasi bahan baku
-for i in range(jumlah_bahan_baku):
+for i in range(bahan_baku):
     nama_bahan_baku = st.text_input(f"Masukkan nama bahan baku {i+1}: ")
     jumlah_bahan_baku_per_produk = st.number_input(f"Masukkan jumlah bahan baku per produk: ")
     harga_bahan_baku = st.number_input(f"Masukkan harga bahan baku per satuan: ")
