@@ -5,7 +5,7 @@ st.title("Kebutuhan Bahan Baku")
 
 # Inisialisasi session state
 if "products" not in st.session_state:
-    st.session_state.products = pd.DataFrame({"Customer": [" "], "Produk": [" "], "Count": [" "], "Jenis": [" "], "Quantity": [1], "Harga": [1], "Total Amount": [1]})
+    st.session_state.products = pd.DataFrame({"Customer": [" "], "Produk": [" "], "Count": [" "], "Jenis": [" "], "Quantity": [1], "Harga": [1], "Total Amount": [1] "key": [0]})
 
 with st.sidebar:
     st.header("Marketing Plan")
