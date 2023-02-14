@@ -23,6 +23,11 @@ with st.sidebar:
         new_product = pd.DataFrame({"Customer": [customer_name], "Produk": [product_name], "Count": [count], "Jenis": [jenis], "Quantity": [quantity], "Harga": [harga], "Total Amount": [total_amount]})
         st.session_state.products = pd.concat([st.session_state.products, new_product], ignore_index=True)
 
+st.write("Daftar Produk")
+st.write(st.session_state.products[1:].reset_index(drop=True))
+total_amount = st.session_state.products["Total Amount"].sum()
+st.write(f"Total Amount: {total_amount:.2f}") 
+
 if st.button("Hitung Jumlah Produk"):
     product_sum = st.session_state.products.groupby(['Produk']).sum().reset_index()
     st.write(product_sum)
