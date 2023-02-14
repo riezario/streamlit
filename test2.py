@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import base64
+from io import BytesIO
+import weasyprint
 
 st.title("Kebutuhan Bahan Baku")
 
@@ -20,10 +23,12 @@ with st.sidebar:
         new_product = pd.DataFrame({"Customer": [customer_name], "Produk": [product_name], "Count": [count], "Jenis": [jenis], "Quantity": [quantity], "Harga": [harga], "Total Amount": [total_amount]})
         st.session_state.products = pd.concat([st.session_state.products, new_product], ignore_index=True)
 
-st.write("Daftar Produk")
-st.write(st.session_state.products[1:].reset_index(drop=True))
-total_amount = st.session_state.products["Total Amount"].sum()
-st.write(f"Total Amount: {total_amount:.2f}")
 if st.button("Hitung Jumlah Produk"):
     product_sum = st.session_state.products.groupby(['Produk']).sum().reset_index()
     st.write(product_sum)
+    pdf = product_sum.to_html().encode("UTF-8")
+    io = BytesIO()
+    weasyprint.HTML(string=pdf).write_pdf(io)
+    b64 = base64.b64encode(io.getvalue()).decode()
+    href = f'<a href="data:application/pdf;base64,{b64}" download="laporan.pdf">Download PDF</a>'
+    st.markdown(href, unsafe_allow_html=True)
