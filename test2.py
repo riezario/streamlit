@@ -12,7 +12,7 @@ with st.sidebar:
     customer_name = st.text_input("Nama Customer")
     product_name = st.text_input("Nama Produk")
     count = st.number_input("Count", min_value=0, step=1)
-    jenis = st.selectbox("Jenis", options=["A", "B", "C"])
+    jenis = st.selectbox("Jenis", options=["RAW WHITE", "BLEACH WHITE", "COLOR", "BICOLOR", "RAMELA"])
     quantity = st.number_input("Quantity", min_value=0, step=1)
     harga = st.number_input("Harga", min_value=0.0, step=0.01)
     if st.button("Tambahkan"):
