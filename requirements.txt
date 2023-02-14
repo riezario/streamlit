@@ -1,2 +1,3 @@
 streamlit
 pandas
+Weasyprint==0.53.0
