@@ -24,3 +24,6 @@ st.write("Daftar Produk")
 st.write(st.session_state.products[1:].reset_index(drop=True))
 total_amount = st.session_state.products["Total Amount"].sum()
 st.write(f"Total Amount: {total_amount:.2f}")
+if st.button("Hitung Jumlah Produk"):
+    product_sum = st.session_state.products.groupby(['Produk']).sum().reset_index()
+    st.write(product_sum)
