@@ -27,7 +27,10 @@ total_amount = st.session_state.products["Total Amount"].sum()
 st.write(f"Total Amount: {total_amount:.2f}") 
 
 if st.button("Hitung Jumlah Produk"):
+    if st.session_state.products.empty:
+        st.warning("Belum ada produk yang ditambahkan.")
+        st.stop()
     product_sum = st.session_state.products.groupby(['Produk']).sum().reset_index()
     table_html = product_sum.to_html()
-    report = html.Div(table_html, height=500, scrolling=True)
-    st.components.v1.html(report)
+    st.components.v1.html(table_html, height=500, scrolling=True)
+
