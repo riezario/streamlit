@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
-import base64
-from io import BytesIO
-import weasyprint
+from streamlit.components.v1 import html
 
 st.title("Kebutuhan Bahan Baku")
 
@@ -30,10 +28,6 @@ st.write(f"Total Amount: {total_amount:.2f}")
 
 if st.button("Hitung Jumlah Produk"):
     product_sum = st.session_state.products.groupby(['Produk']).sum().reset_index()
-    st.write(product_sum)
-    pdf = product_sum.to_html().encode("UTF-8")
-    io = BytesIO()
-    weasyprint.HTML(string=pdf).write_pdf(io)
-    b64 = base64.b64encode(io.getvalue()).decode()
-    href = f'<a href="data:application/pdf;base64,{b64}" download="laporan.pdf">Download PDF</a>'
-    st.markdown(href, unsafe_allow_html=True)
+    table_html = product_sum.to_html()
+    report = html.Div(table_html, height=500, scrolling=True)
+    st.components.v1.html(report)
