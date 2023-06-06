@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from streamlit.components.v1 import html
 
-st.title("Kebutuhan Bahan Baku")
+st.title("Kebutuhan RAW MATERIAL")
 
 # Inisialisasi session state
 if "products" not in st.session_state:
